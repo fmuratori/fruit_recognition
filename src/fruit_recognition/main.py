@@ -22,7 +22,7 @@ log = logging.getLogger(__name__)
 @click.option("--target", default='apples', help="Select target of the classification routine. values: apple or fruit")
 @click.option("--data", default='./data/', help="Images data folder location")
 @click.option("--model", default='./data/models/', help="Path to where to save a trained model")
-def fruit_classifier(data, target, models):
+def fruit_classifier(data, target, model):
     log.info('Starting fruit classification ...')   
 
     # get data
