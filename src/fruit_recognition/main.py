@@ -2,14 +2,16 @@ import numpy as np
 import logging
 import click
 import time
+import pandas
 import os
+import pandas as pd
 
 from . import load, opencv, model
 
 from sklearn.model_selection import train_test_split
 
 # logging utility
-logging.basicConfig(level=logging.INFO, 
+logging.basicConfig(level=logging.DEBUG, 
                     format='%(asctime)s - %(message)s', 
                     datefmt='%m/%d/%Y %H:%M:%S')
 log = logging.getLogger(__name__)
@@ -18,7 +20,9 @@ log = logging.getLogger(__name__)
 
 @click.command()
 @click.option("--target", default='apples', help="Select target of the classification routine. values: apple or fruit")
-def fruit_classifier(target='apple'):
+@click.option("--data", default='./data/', help="Images data folder location")
+@click.option("--model", default='./data/models/', help="Path to where to save a trained model")
+def fruit_classifier(data, target, models):
     log.info('Starting fruit classification ...')   
 
     # get data
@@ -30,7 +34,7 @@ def fruit_classifier(target='apple'):
         target = load.FRUIT_DATASET_v1
     elif target == 'fruit2':
         target = load.FRUIT_DATASET_v2
-    images = load.load_(images, opencv.loader, target)
+    images = load.load_fruits(data, opencv.loader, target)
     end_time = time.time()
     log.info('Loaded {} images in {} seconds'.format(len(images), 
                                                      int(end_time-start_time)))
@@ -53,8 +57,7 @@ def fruit_classifier(target='apple'):
     # model train
     log.info('Training classifier model ...')
     start_time = time.time()
-    classifier = model.ImageClassifier((200, 200, 3), len(classes_lookup), 
-        os.path.join(data,  'models', 'apples_classifier_t2.h5'))
+    classifier = model.ImageClassifier((200, 200, 3), len(classes_lookup), model)
     classifier.fit(X_train, y_train)
     end_time = time.time()
     log.info('Classifier model trained in {} seconds'.format(int(end_time - start_time)))

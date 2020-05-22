@@ -7,7 +7,7 @@ import pandas as pd
 log = logging.getLogger(__name__)
 
 ############################## CUSTOM LOAD ################################
-APPLE_DATASET = {"Apple": ["Apple A", "Apple B", "Apple C", "Apple D", "Apple E", "Apple F"]}
+APPLE_DATASET = [{"Apple": ["Apple A", "Apple B", "Apple C", "Apple D", "Apple E", "Apple F"]}]
 
 FRUIT_DATASET_v1 = [
     {"Apple": ["Total number of Apples"]},
@@ -48,13 +48,13 @@ def load_fruits(path, loader, structure):
         raise ValueError('Path {} is not a directory')
 
     images = []
-    for ffolder in structure:
-        if isinstance(ffolder, str): # folder without child folders
-            images.extend(load_folder_images(path, ffolder, loader))
-        elif isinstace(ffolder, dict): # folder with child folders
-            (class_name, child_classes) = ffolder.items()
+    for value in structure:
+        if isinstance(value, str): # folder without child folders
+            images.extend(load_folder_images(path, value, loader))
+        elif isinstance(value, dict): # folder with child folders
+            (class_name, child_classes), = value.items()
             child_path = os.path.join(path, class_name)
-            load_fruits(child_path, loader, structure)
+            images.extend(load_fruits(child_path, loader, child_classes))
 
     return images
 
@@ -75,9 +75,9 @@ def load_folder_images(path, class_name, loader):
     path = os.path.join(path, class_name)
     if not os.path.isdir(path):
         raise ValueError('Specified path {} is not a folder'.format(path))
-    images = [(loader(os.path.join(folder,filename)), class_name) 
+    images = [(loader(os.path.join(path,filename)), class_name) 
               for filename in sorted(os.listdir(path)) 
-              if is_valid_image(filepath)]
+              if is_valid_image(os.path.join(path,filename))]
     log.debug('Loaded {} images of class {}'.format(len(images), class_name))
     return images
 
