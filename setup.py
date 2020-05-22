@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name = "fruit-recognition",
+    name = "fruit_recognition",
     version = "1.0.0",
     packages = find_packages("src"),
     package_dir = {"": "src"},
@@ -17,7 +17,7 @@ setup(
     ],
     entry_points = {
         "console_scripts": [
-            "fruit-recognition = fruit_recognition.main:main"
+            "fruit_recognition = fruit_recognition.main:main"
         ]
     }
 )
