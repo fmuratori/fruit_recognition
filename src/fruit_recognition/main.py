@@ -21,8 +21,8 @@ log = logging.getLogger(__name__)
 @click.command()
 @click.option("--target", default='apples', help="Select target of the classification routine. values: apple or fruit")
 @click.option("--data", default='./data/', help="Images data folder location")
-@click.option("--model", default='./data/models/', help="Path to where to save a trained model")
-def fruit_classifier(data, target, model):
+@click.option("--save", default='./data/models/', help="Path to where to save a trained model")
+def fruit_classifier(data, target, save):
     log.info('Starting fruit classification ...')   
 
     # get data
@@ -57,7 +57,7 @@ def fruit_classifier(data, target, model):
     # model train
     log.info('Training classifier model ...')
     start_time = time.time()
-    classifier = model.ImageClassifier((200, 200, 3), len(classes_lookup), model)
+    classifier = model.ImageClassifier((200, 200, 3), len(classes_lookup), save)
     classifier.fit(X_train, y_train)
     end_time = time.time()
     log.info('Classifier model trained in {} seconds'.format(int(end_time - start_time)))
